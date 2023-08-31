@@ -1,20 +1,11 @@
 import React, { Component, useState } from 'react';
 import axios from 'axios'
 import { Localhost, LoginVariables } from './Variables.js';
+import $ from 'jquery';
+import { LoginError } from './Message.js';
 
 
 export default function Login() {
-  // const loginList = {
-  //   username: "",
-  //   password: "",
-  // };
-
-  //const [username, setusername] = useState();
-  // const handleChange = (event) => {
-  //   setusername(event.target.value);
-  //   console.log(username);
-  // };
-
   const [info, updateinfo] = useState({
     username: "",
     password: "",
@@ -34,32 +25,38 @@ export default function Login() {
     }
   };
 
-
   const Login = async () => {
-    console.log(info);
-    await axios.post(Localhost.localhost + LoginVariables.Login,
-      {
+    $("#err").hide();
+
+    //Check empty
+    if (info.username == '' || info.password == '') {
+      $("#err").text(LoginError.Empty);
+      $("#err").show();
+    } else {
+      await axios.post(Localhost.localhost + LoginVariables.Login,
+        {
           LoginName: info.username,
           Password: info.password,
-      },
-      {
-        headers: {
-          'Accept': 'application/json',
-          
-          'Content-Type': 'application/json'
         },
-      }
-    )
-     .then((response) => { console.log(response.data) });
-
-    // await axios.post(Localhost.localhost + LoginVariables.Login + 
-    //   "?username=" + info.username + "&password=" + info.password)
-    //.then((response) => {console.log(response.data)});
+        {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+        }
+      )
+        .then((response) => {
+          console.log(response.data)
+          if (response.data == 0) {
+            $("#err").text(LoginError.Invalid);
+            $("#err").show();
+          }
+        });
+    }
   };
 
   const GetAccount = async () => {
     console.log(info);
-
     await axios.get(Localhost.localhost + LoginVariables.GetAccount)
       .then((response) => {
         console.log(response.data);
@@ -80,7 +77,11 @@ export default function Login() {
           <input type="password" name="pass" value={info.password} onChange={infoChange} required />
         </div>
 
-        <div className="button-container">
+        <div>
+          <span id="err" style={{ display: 'none' }}></span>
+        </div>
+
+        <div>
           <button type="button"
             className="btn btn-primary m-2"
             onClick={() => Login()}>
@@ -103,4 +104,4 @@ export default function Login() {
     </div>
   )
 
-}
+};
