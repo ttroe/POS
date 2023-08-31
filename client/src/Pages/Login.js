@@ -1,11 +1,14 @@
 import React, { Component, useState } from 'react';
 import axios from 'axios'
-import { Localhost, LoginVariables } from './Variables.js';
+import { Localhost, LoginVariables } from '../Variables.js';
 import $ from 'jquery';
-import { LoginError } from './Message.js';
+import { LoginError } from '../Message.js';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function Login() {
+  const navigate = useNavigate();
+  
   const [info, updateinfo] = useState({
     username: "",
     password: "",
@@ -61,6 +64,8 @@ export default function Login() {
       .then((response) => {
         console.log(response.data);
       });
+
+      navigate('/main');
   };
 
 
